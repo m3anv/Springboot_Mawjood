@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{item.details})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+    <section class="two-column">
+        <article class="panel">
+            <span th:class="'badge ' + ${report.status}" th:text="#{${'reportStatus.' + report.status.name()}}">Submitted</span>
+            <h1 th:text="${report.itemName}">Item</h1>
+            <p class="lead" th:text="${report.description != null and !report.description.isBlank() ? report.description : #messages.msg('item.noDescription')}">Description</p>
+            <div class="detail-list">
+                <div class="detail-tile"><span th:text="#{item.location}">Location</span><strong th:text="${report.locationName}">Location</strong></div>
+                <div class="detail-tile"><span th:text="#{item.lostArea}">Area</span><strong th:text="${report.lostArea}">Area</strong></div>
+                <div class="detail-tile"><span th:text="#{item.category}">Category</span><strong th:text="#{${'category.' + report.category}}">Category</strong></div>
+                <div class="detail-tile"><span th:text="#{item.color}">Color</span><strong th:text="#{${'color.' + report.color}}">Color</strong></div>
+                <div class="detail-tile"><span th:text="#{item.date}">Date</span><strong th:text="${report.lostDate}">Date</strong></div>
+            </div>
+        </article>
+        <aside class="stack">
+            <div class="card"><h3 th:text="#{item.statusTracking}">Status tracking</h3><p class="help-text" th:text="#{item.statusText}">Updates are sent by the Lost & Found Office.</p></div>
+            <div class="card">
+                <div class="actions">
+                    <a class="btn btn-secondary btn-sm" th:href="@{/dashboard}" th:text="#{item.goDashboard}">Go to Dashboard</a>
+                    <form method="post" th:action="@{'/reports/' + ${report.id} + '/delete'}" th:attr="onsubmit=|return confirm('#{delete.confirmReport}');|">
+                        <button class="btn-danger btn-sm" type="submit" th:text="#{delete.button}">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+    </section>
+    <section class="section">
+        <div class="section-header"><div><p class="eyebrow" th:text="#{item.updates}">Updates</p><h2 th:text="#{item.caseTimeline}">Case timeline</h2></div></div>
+        <div class="stack" th:if="${!#lists.isEmpty(updates)}">
+            <article class="card" th:each="update : ${updates}">
+                <span th:class="'badge ' + ${update.status}" th:text="#{${'reportStatus.' + update.status.name()}}">Status</span>
+                <p th:text="${update.message}">Message</p>
+                <p class="help-text" th:text="${#temporals.format(update.createdAt, 'yyyy-MM-dd HH:mm')}">Time</p>
+            </article>
+        </div>
+        <div class="empty-state" th:if="${#lists.isEmpty(updates)}" th:text="#{item.noUpdates}">No updates yet.</div>
+    </section>
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{item.report.lostTitle})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+    <section class="two-column">
+        <div class="panel">
+            <p class="eyebrow" th:text="#{item.report.lostEyebrow}">Lost report</p>
+            <h1 th:text="#{item.report.lostTitle}">Report Lost Item</h1>
+            <p class="lead" th:text="#{item.report.text}">Your report goes only to the selected Lost & Found Office.</p>
+            <p class="error" th:if="${error}" th:text="${error}"></p>
+            <form method="post" th:action="@{/reports/new}">
+                <div class="field">
+                    <label for="locationId" th:text="#{item.locationOffice}">Location Office</label>
+                    <select id="locationId" name="locationId" required>
+                        <option value="" th:text="#{item.chooseLocation}">Choose location</option>
+                        <option th:each="location : ${locations}" th:value="${location.id}" th:selected="${locationId == location.id}" th:text="${location.name}">Location</option>
+                    </select>
+                </div>
+                <div class="form-grid">
+                    <div class="field"><label for="itemName" th:text="#{item.name}">Item Name</label><input id="itemName" name="itemName" maxlength="120" th:value="${itemName}" required></div>
+                    <div class="field">
+                        <label for="category" th:text="#{item.category}">Category</label>
+                        <select id="category" name="category" required>
+                            <option value="" th:text="#{item.chooseCategory}">Choose category</option>
+                            <option th:each="option : ${categories}" th:value="${option}" th:selected="${category == option}" th:text="#{${'category.' + option}}">Category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="color" th:text="#{item.color}">Color</label>
+                        <select id="color" name="color" required>
+                            <option value="" th:text="#{item.chooseColor}">Choose color</option>
+                            <option th:each="option : ${colors}" th:value="${option}" th:selected="${color == option}" th:text="#{${'color.' + option}}">Color</option>
+                        </select>
+                    </div>
+                    <div class="field"><label for="lostDate" th:text="#{item.date}">Date</label><input id="lostDate" type="date" name="lostDate" lang="en" th:value="${lostDate}" required></div>
+                </div>
+                <div class="field"><label for="lostArea" th:text="#{item.lostArea}">Area inside location</label><input id="lostArea" name="lostArea" maxlength="160" th:value="${lostArea}" required></div>
+                <div class="field"><label for="description" th:text="#{item.description}">Description</label><textarea id="description" name="description" th:text="${description}"></textarea></div>
+                <div class="field"><label for="contactInfo" th:text="#{item.contact}">Contact Info</label><input id="contactInfo" name="contactInfo" maxlength="150" th:value="${contactInfo}" required></div>
+                <div class="actions">
+                    <button type="submit" th:text="#{item.submitLost}">Submit Lost Report</button>
+                    <a class="btn btn-secondary" th:href="@{/dashboard}" th:text="#{item.cancel}">Cancel</a>
+                </div>
+            </form>
+        </div>
+        <aside class="stack">
+            <div class="card"><h3 th:text="#{item.tip.title}">Better reports get better matches</h3><p class="help-text" th:text="#{item.tip.text}">Use precise details.</p></div>
+            <div class="card"><h3 th:text="#{item.after.title}">After submission</h3><p class="help-text" th:text="#{item.after.text}">The office handles matching and updates.</p></div>
+        </aside>
+    </section>
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

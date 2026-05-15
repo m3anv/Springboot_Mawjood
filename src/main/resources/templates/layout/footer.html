@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer class="site-footer" th:fragment="footer">
+    <div class="container footer-grid">
+        <p th:text="#{footer.text}">&copy; 2026 Mawjood. Office-managed lost and found platform.</p>
+        <div>
+            <a th:href="@{/}" th:text="#{nav.home}">Home</a>
+            <a th:href="@{/reports/new}" th:text="#{nav.reportLost}">Report Lost</a>
+            <a th:href="@{/login}" th:text="#{nav.login}">Login</a>
+        </div>
+    </div>
+    <script th:src="@{/js/main.js}"></script>
+</footer>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{office.caseDetails})}"></head>
+<body><header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+    <section class="two-column">
+        <article class="panel">
+            <span th:class="'badge ' + ${report.status}" th:text="#{${'reportStatus.' + report.status.name()}}">Status</span>
+            <h1 th:text="${report.itemName}">Item</h1>
+            <p class="lead" th:text="${report.description}">Description</p>
+            <div class="detail-list">
+                <div class="detail-tile"><span th:text="#{item.contact}">Contact</span><strong th:text="${report.contactInfo}">Contact</strong></div>
+                <div class="detail-tile"><span th:text="#{item.location}">Area</span><strong th:text="${report.lostArea}">Area</strong></div>
+                <div class="detail-tile"><span th:text="#{item.category}">Category</span><strong th:text="#{${'category.' + report.category}}">Category</strong></div>
+                <div class="detail-tile"><span th:text="#{item.color}">Color</span><strong th:text="#{${'color.' + report.color}}">Color</strong></div>
+                <div class="detail-tile"><span th:text="#{item.date}">Date</span><strong th:text="${report.lostDate}">Date</strong></div>
+            </div>
+        </article>
+        <aside class="stack">
+            <div class="card">
+                <h3 th:text="#{office.updateStatus}">Update status</h3>
+                <form method="post" th:action="@{'/office/reports/' + ${report.id} + '/status'}">
+                    <div class="field"><label for="status" th:text="#{item.status}">Status</label><select id="status" name="status" required><option th:each="status : ${statuses}" th:value="${status}" th:selected="${status == report.status}" th:text="#{${'reportStatus.' + status.name()}}">Status</option></select></div>
+                    <div class="field"><label for="message" th:text="#{office.messageToUser}">Message to user</label><textarea id="message" name="message" required></textarea></div>
+                    <label class="checkbox-row"><input type="checkbox" name="visibleToUser" value="true" checked> <span th:text="#{office.visibleToUser}">Visible to user</span></label>
+                    <button type="submit" th:text="#{admin.update}">Update</button>
+                </form>
+            </div>
+            <div class="card">
+                <h3 th:text="#{delete.reportTitle}">Delete report</h3>
+                <p class="help-text" th:text="#{delete.reportText}">Delete this report and related updates or matches.</p>
+                <form method="post" th:action="@{'/office/reports/' + ${report.id} + '/delete'}" th:attr="onsubmit=|return confirm('#{delete.confirmReport}');|">
+                    <button class="btn-danger btn-sm" type="submit" th:text="#{delete.button}">Delete</button>
+                </form>
+            </div>
+        </aside>
+    </section>
+    <section class="section">
+        <div class="section-header"><div><p class="eyebrow" th:text="#{office.matching}">Matching</p><h2 th:text="#{office.possibleMatches}">Possible matches</h2></div></div>
+        <div class="grid" th:if="${!#lists.isEmpty(possibleMatches)}">
+            <article class="card" th:each="item : ${possibleMatches}">
+                <span class="badge" th:text="#{foundStatus.IN_INVENTORY}">Inventory</span>
+                <h3 th:text="${item.itemName}">Found item</h3>
+                <p class="help-text" th:text="${item.description}">Description</p>
+                <div class="meta"><span th:text="#{${'category.' + item.category}}">Category</span><span th:text="#{${'color.' + item.color}}">Color</span><span th:text="${item.foundArea}">Area</span></div>
+                <form method="post" th:action="@{'/office/reports/' + ${report.id} + '/matches/' + ${item.id}}"><input type="hidden" name="notes" value=""><button class="btn-sm" type="submit" th:text="#{office.createMatch}">Create match</button></form>
+            </article>
+        </div>
+        <div class="empty-state" th:if="${#lists.isEmpty(possibleMatches)}" th:text="#{office.noPossibleMatches}">No possible matches.</div>
+    </section>
+    <section class="section">
+        <div class="section-header"><div><p class="eyebrow" th:text="#{item.updates}">Updates</p><h2 th:text="#{item.caseTimeline}">Timeline</h2></div></div>
+        <div class="stack"><article class="card" th:each="update : ${updates}"><span th:class="'badge ' + ${update.status}" th:text="#{${'reportStatus.' + update.status.name()}}">Status</span><p th:text="${update.message}">Message</p><p class="help-text" th:text="${#temporals.format(update.createdAt, 'yyyy-MM-dd HH:mm')}">Time</p></article></div>
+    </section>
+</main><footer th:replace="~{layout/footer :: footer}"></footer></body></html>

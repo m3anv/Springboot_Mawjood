@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{office.editFound})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+    <section class="two-column">
+        <div class="panel">
+            <p class="eyebrow" th:text="${office.location.name}">Location</p>
+            <h1 th:text="#{office.editFound}">Edit Found Item</h1>
+            <p class="lead" th:text="#{office.editFoundText}">Update the details of this inventory record.</p>
+            <p class="error" th:if="${error}" th:text="${error}"></p>
+            <form method="post" th:action="@{'/office/inventory/' + ${item.id} + '/edit'}">
+                <div class="field">
+                    <label for="itemName" th:text="#{item.name}">Item</label>
+                    <input id="itemName" name="itemName" th:value="${itemName}" required>
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="category" th:text="#{item.category}">Category</label>
+                        <select id="category" name="category" required>
+                            <option value="" th:text="#{item.chooseCategory}">Choose category</option>
+                            <option th:each="option : ${categories}" th:value="${option}" th:selected="${category == option}" th:text="#{${'category.' + option}}">Category</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="color" th:text="#{item.color}">Color</label>
+                        <select id="color" name="color" required>
+                            <option value="" th:text="#{item.chooseColor}">Choose color</option>
+                            <option th:each="option : ${colors}" th:value="${option}" th:selected="${color == option}" th:text="#{${'color.' + option}}">Color</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="field"><label for="foundDate" th:text="#{office.foundDate}">Found date</label><input id="foundDate" type="date" name="foundDate" lang="en" th:value="${foundDate}" required></div>
+                    <div class="field"><label for="foundArea" th:text="#{office.foundArea}">Found area</label><input id="foundArea" name="foundArea" th:value="${foundArea}" required></div>
+                </div>
+                <div class="field"><label for="storageReference" th:text="#{office.storage}">Storage reference</label><input id="storageReference" name="storageReference" th:value="${storageReference}"></div>
+                <div class="field"><label for="description" th:text="#{item.description}">Description</label><textarea id="description" name="description" th:text="${description}"></textarea></div>
+                <div class="actions"><button type="submit" th:text="#{office.saveEdit}">Save Changes</button><a class="btn btn-secondary" th:href="@{/office/inventory}" th:text="#{item.cancel}">Cancel</a></div>
+            </form>
+        </div>
+        <aside class="stack">
+            <div class="card"><h3 th:text="#{office.privateInventory}">Private inventory</h3><p class="help-text" th:text="#{office.privateInventoryText}">Normal users cannot see or create found inventory.</p></div>
+            <div class="card"><h3 th:text="#{office.matchingFilters}">Matching filters</h3><p class="help-text" th:text="#{office.matchingFiltersText}">Category and color are saved as shared codes, so Arabic and English reports match the same way.</p></div>
+        </aside>
+    </section>
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

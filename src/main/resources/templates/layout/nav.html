@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="site-header" th:fragment="nav">
+    <div class="nav-shell">
+        <a class="brand" th:href="@{/}" aria-label="Mawjood home">
+            <span class="brand-mark" th:text="${#locale.language == 'ar' ? 'م' : 'M'}">M</span>
+            <span>
+                <strong th:text="#{app.name}">Mawjood</strong>
+                <small th:text="#{app.tagline}">Office-managed lost items</small>
+            </span>
+        </a>
+        <button class="nav-toggle" type="button" data-nav-toggle th:aria-label="#{nav.toggle}" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+        <nav class="nav-links" data-nav-menu aria-label="Main navigation">
+            <a th:href="@{/}" th:text="#{nav.home}">Home</a>
+            <a th:if="${currentUser == null or currentUser.role.name() == 'USER'}" th:href="@{/reports/new}" th:text="#{nav.reportLost}">Report Lost</a>
+            <a th:if="${currentUser != null and currentUser.role.name() == 'USER'}" th:href="@{/dashboard}" th:text="#{nav.myReports}">My Reports</a>
+            <a th:if="${currentUser != null and currentUser.role.name() == 'OFFICE'}" th:href="@{/office}" th:text="#{nav.office}">Office</a>
+            <a th:if="${currentUser != null and currentUser.role.name() == 'OFFICE'}" th:href="@{/office/inventory}" th:text="#{nav.inventory}">Inventory</a>
+            <a th:if="${currentUser != null and currentUser.admin}" th:href="@{/admin}" th:text="#{nav.admin}">Admin</a>
+            <a th:if="${currentUser == null}" th:href="@{/login}" th:text="#{nav.login}">Login</a>
+            <a th:if="${currentUser == null}" class="btn btn-primary btn-sm" th:href="@{/register}" th:text="#{nav.register}">Register</a>
+            <a th:if="${currentUser != null}" class="btn btn-secondary btn-sm" th:href="@{/logout}" th:text="#{nav.logout}">Logout</a>
+            <span class="language-switch" aria-label="Language switch">
+                <a th:href="@{?lang=en}" th:text="#{lang.english}">English</a>
+                <a th:href="@{?lang=ar}" th:text="#{lang.arabic}">Arabic</a>
+            </span>
+        </nav>
+    </div>
+</header>
+</body>
+</html>

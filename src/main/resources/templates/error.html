@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head('Error')}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+    <section class="panel">
+        <p class="eyebrow">Error</p>
+        <h1>Something went wrong</h1>
+        <p class="lead">The request could not be completed. Please return to your dashboard and try again.</p>
+        <div class="actions">
+            <a class="btn" th:href="@{/}">Home</a>
+            <a class="btn btn-secondary" th:href="@{/dashboard}">Dashboard</a>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

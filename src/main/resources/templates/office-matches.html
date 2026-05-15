@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{office.matches})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+<section class="panel">
+
+    <div class="section-header">
+        <div>
+            <p class="eyebrow" th:text="${office.name}">Office</p>
+            <h1 th:text="#{office.matches}">Match Management</h1>
+        </div>
+    </div>
+
+    <!-- ── Each match card ── -->
+    <div class="stack" th:if="${!#lists.isEmpty(matches)}">
+    <div th:each="match : ${matches}" style="
+        background:#fff;
+        border:1px solid #dde5ef;
+        border-radius:10px;
+        overflow:hidden;
+        box-shadow:0 8px 22px rgba(23,32,51,.06);
+    ">
+
+        <!-- ── Action bar ── -->
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:12px;
+            flex-wrap:wrap;
+            padding:14px 20px;
+            background:#f8fafc;
+            border-bottom:1px solid #dde5ef;
+        ">
+            <span th:class="'badge ' + ${match.status}"
+                  th:text="#{${'matchStatus.' + match.status.name()}}">Status</span>
+
+            <form method="post"
+                  th:action="@{'/office/matches/' + ${match.id} + '/status'}"
+                  style="display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center;flex:1;min-width:0;margin:0;">
+                <select name="status" style="width:auto;min-width:160px;flex-shrink:0;">
+                    <option th:each="s : ${statuses}"
+                            th:value="${s}"
+                            th:selected="${s == match.status}"
+                            th:text="#{${'matchStatus.' + s.name()}}">Status</option>
+                </select>
+                <input name="notes"
+                       th:value="${match.notes}"
+                       th:placeholder="#{match.notes}"
+                       style="flex:1;min-width:160px;">
+                <button class="btn-sm" type="submit" th:text="#{admin.update}">Update</button>
+            </form>
+        </div>
+
+        <!-- ── Lost Report section ── -->
+        <div style="padding:20px 20px 0;">
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+                padding-bottom:10px;
+                border-bottom:2px solid #0f766e22;
+            ">
+                <span style="
+                    display:inline-block;
+                    width:4px;
+                    height:20px;
+                    background:#0f766e;
+                    border-radius:2px;
+                "></span>
+                <p class="eyebrow" style="margin:0;" th:text="#{office.lostReport}">Lost Report</p>
+                <a th:href="@{'/office/reports/' + ${match.lostReport.id}}"
+                   class="btn btn-secondary btn-sm"
+                   style="margin-inline-start:auto;"
+                   th:text="#{item.viewDetails}">View</a>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding-bottom:16px;">
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.name}">Item</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;word-break:break-word;"
+                            th:text="${match.lostReport.itemName}">Name</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.category}">Category</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="#{${'category.' + match.lostReport.category}}">Category</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.color}">Color</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="#{${'color.' + match.lostReport.color}}">Color</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.date}">Date</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="${match.lostReport.lostDate}">Date</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.lostArea}">Area</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;word-break:break-word;"
+                            th:text="${match.lostReport.lostArea}">Area</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.contact}">Contact</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="${match.lostReport.contactInfo}">Contact</strong>
+                </div>
+
+                <div class="detail-tile" th:if="${match.lostReport.description}"
+                     style="padding:12px 14px;grid-column:1/-1;">
+                    <span style="font-size:0.7rem;" th:text="#{item.description}">Description</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;font-weight:500;"
+                            th:text="${match.lostReport.description}">Description</strong>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── Divider ── -->
+        <div style="height:1px;background:linear-gradient(to right,transparent,#dde5ef 20%,#dde5ef 80%,transparent);margin:0 20px;"></div>
+
+        <!-- ── Found Item section ── -->
+        <div style="padding:16px 20px 20px;">
+            <div style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+                padding-bottom:10px;
+                border-bottom:2px solid #f59e0b22;
+            ">
+                <span style="
+                    display:inline-block;
+                    width:4px;
+                    height:20px;
+                    background:#f59e0b;
+                    border-radius:2px;
+                "></span>
+                <p class="eyebrow" style="margin:0;color:#92400e;" th:text="#{office.foundItem}">Found Item</p>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;">
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.name}">Item</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;word-break:break-word;"
+                            th:text="${match.foundItem.itemName}">Name</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.category}">Category</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="#{${'category.' + match.foundItem.category}}">Category</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{item.color}">Color</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="#{${'color.' + match.foundItem.color}}">Color</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{office.foundDate}">Date</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="${match.foundItem.foundDate}">Date</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{office.foundArea}">Area</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;word-break:break-word;"
+                            th:text="${match.foundItem.foundArea}">Area</strong>
+                </div>
+
+                <div class="detail-tile" style="padding:12px 14px;">
+                    <span style="font-size:0.7rem;" th:text="#{office.storage}">Storage</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;"
+                            th:text="${match.foundItem.storageReference} ?: '-'">Storage</strong>
+                </div>
+
+                <div class="detail-tile" th:if="${match.foundItem.description}"
+                     style="padding:12px 14px;grid-column:1/-1;">
+                    <span style="font-size:0.7rem;" th:text="#{item.description}">Description</span>
+                    <strong style="display:block;margin-top:6px;font-size:0.9rem;font-weight:500;"
+                            th:text="${match.foundItem.description}">Description</strong>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- end match card -->
+    </div><!-- end stack -->
+
+    <div class="empty-state" th:if="${#lists.isEmpty(matches)}" th:text="#{office.emptyMatches}">No matches.</div>
+
+</section>
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

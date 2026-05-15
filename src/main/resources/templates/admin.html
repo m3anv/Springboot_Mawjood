@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{admin.title})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+
+    <!-- ── Page Header ── -->
+    <section class="section-header">
+        <div>
+            <p class="eyebrow" th:text="#{admin.eyebrow}">Admin</p>
+            <h1 th:text="#{admin.management}">Platform Management</h1>
+            <p class="lead" th:text="#{admin.text}">Review accounts, locations, and office ownership.</p>
+        </div>
+    </section>
+
+    <!-- ── Summary Stats ── -->
+    <section class="stats">
+        <article class="card stat-card">
+            <span th:text="#{admin.users}">Users</span>
+            <strong th:text="${#lists.size(allUsers)}">0</strong>
+        </article>
+        <article class="card stat-card">
+            <span th:text="#{home.locations}">Locations</span>
+            <strong th:text="${#lists.size(locations)}">0</strong>
+        </article>
+        <article class="card stat-card">
+            <span th:text="#{nav.office}">Offices</span>
+            <strong th:text="${#lists.size(offices)}">0</strong>
+        </article>
+        <article class="card stat-card">
+            <span th:text="#{admin.reports}">Reports</span>
+            <strong th:text="${#lists.size(reports)}">0</strong>
+        </article>
+    </section>
+
+    <!-- ── Notifications ── -->
+    <section class="panel section" th:if="${!#lists.isEmpty(notifications)}">
+        <h2>Notifications</h2>
+        <div class="stack">
+            <article class="card" th:each="n : ${notifications}">
+                <p th:text="${n.message}">Message</p>
+                <p class="help-text" th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}">Time</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- ── Reports Table ── -->
+    <section class="panel section">
+        <h2 th:text="#{admin.reports}">Reports</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th th:text="#{item.name}">Item</th>
+                        <th th:text="#{admin.name}">User</th>
+                        <th th:text="#{item.location}">Location</th>
+                        <th th:text="#{item.status}">Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="report : ${reports}">
+                        <td th:text="${report.itemName}">Item</td>
+                        <td th:text="${report.user.name}">User</td>
+                        <td th:text="${report.location.name}">Location</td>
+                        <td>
+                            <span th:class="'badge ' + ${report.status}"
+                                  th:text="#{${'reportStatus.' + report.status.name()}}">Status</span>
+                        </td>
+                        <td>
+                            <form method="post"
+                                  th:action="@{'/admin/reports/' + ${report.id} + '/delete'}"
+                                  th:attr="onsubmit=|return confirm('#{delete.confirmReport}');|">
+                                <button class="btn-danger btn-sm" type="submit"
+                                        th:text="#{delete.button}">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${#lists.isEmpty(reports)}"
+             th:text="#{dashboard.emptyReports}">No reports.</div>
+    </section>
+
+    <!-- ── Accounts Table ── -->
+    <section class="panel section">
+
+        <!-- Section header + filter tabs -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px;">
+            <h2 style="margin:0;" th:text="#{admin.accounts}">Accounts</h2>
+
+            <!-- Filter tab bar -->
+            <div style="display:inline-flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+                <a th:href="@{/admin(filter='all')}"
+                   th:text="${#locale.language == 'ar' ? 'الكل' : 'All'}"
+                   th:style="|padding:8px 18px;font-size:0.88rem;text-decoration:none;white-space:nowrap;${filter == 'all' or filter == null ? 'background:var(--primary);color:#fff;font-weight:700;' : 'color:var(--text-soft);'}|">All</a>
+                <a th:href="@{/admin(filter='user')}"
+                   th:text="${#locale.language == 'ar' ? 'المستخدمون' : 'Users'}"
+                   th:style="|padding:8px 18px;font-size:0.88rem;text-decoration:none;white-space:nowrap;border-inline:1px solid var(--border);${filter == 'user' ? 'background:var(--primary);color:#fff;font-weight:700;' : 'color:var(--text-soft);'}|">Users</a>
+                <a th:href="@{/admin(filter='office')}"
+                   th:text="${#locale.language == 'ar' ? 'المكاتب' : 'Offices'}"
+                   th:style="|padding:8px 18px;font-size:0.88rem;text-decoration:none;white-space:nowrap;${filter == 'office' ? 'background:var(--primary);color:#fff;font-weight:700;' : 'color:var(--text-soft);'}|">Offices</a>
+            </div>
+        </div>
+
+        <!-- Accounts table (filtered) -->
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th th:text="#{admin.name}">Name</th>
+                        <th th:text="#{admin.email}">Email</th>
+                        <th th:text="#{admin.role}">Role</th>
+                        <th th:text="#{nav.office}">Office</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${filteredUsers ?: allUsers}">
+                        <td th:text="${user.name}">Name</td>
+                        <td th:text="${user.email}">Email</td>
+                        <td>
+                            <span th:class="'badge ' + ${user.role}"
+                                  th:text="#{${'role.' + user.role.name()}}">Role</span>
+                        </td>
+                        <td th:text="${user.office != null ? user.office.name : '-'}">Office</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(filteredUsers ?: allUsers)}">
+            <p style="margin:0;" th:text="${#locale.language == 'ar' ? 'لا توجد حسابات تطابق هذا الفلتر.' : 'No accounts match this filter.'}">No accounts match this filter.</p>
+        </div>
+
+    </section>
+
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{dashboard.title})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+    <section class="section-header">
+        <div>
+            <p class="eyebrow" th:text="#{dashboard.eyebrow}">User dashboard</p>
+            <h1><span th:text="#{dashboard.welcome}">Welcome,</span> <span th:text="${currentUser.name}">User</span></h1>
+            <p class="lead" th:text="#{dashboard.text}">Track your lost item reports and official office updates.</p>
+        </div>
+        <a class="btn btn-primary" th:href="@{/reports/new}" th:text="#{nav.reportLost}">Report Lost</a>
+    </section>
+    <section class="panel">
+        <div class="section-header">
+            <div>
+                <p class="eyebrow" th:text="#{dashboard.myReports}">My reports</p>
+                <h2 th:text="#{dashboard.reports}">Reports</h2>
+            </div>
+        </div>
+        <div class="table-wrap" th:if="${!#lists.isEmpty(reports)}">
+            <table>
+                <thead><tr><th th:text="#{item.name}">Item</th><th th:text="#{item.location}">Location</th><th th:text="#{item.date}">Date</th><th th:text="#{item.status}">Status</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="report : ${reports}">
+                    <td th:text="${report.itemName}">Wallet</td>
+                    <td th:text="${report.locationName}">Mall</td>
+                    <td th:text="${report.lostDate}">2026-05-01</td>
+                    <td><span th:class="'badge ' + ${report.status}" th:text="#{${'reportStatus.' + report.status.name()}}">Submitted</span></td>
+                    <td>
+                        <div class="actions compact-actions">
+                            <a class="btn btn-secondary btn-sm" th:href="@{'/reports/' + ${report.id}}" th:text="#{item.viewDetails}">Details</a>
+                            <form method="post" th:action="@{'/reports/' + ${report.id} + '/delete'}" th:attr="onsubmit=|return confirm('#{delete.confirmReport}');|">
+                                <button class="btn-danger btn-sm" type="submit" th:text="#{delete.button}">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${#lists.isEmpty(reports)}" th:text="#{dashboard.emptyReports}">No reports yet.</div>
+    </section>
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

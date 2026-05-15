@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{office.title})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+<main class="container page-shell">
+    <section class="section-header">
+        <div><p class="eyebrow" th:text="#{office.eyebrow}">Office workspace</p><h1 th:text="${office.name}">Office</h1><p class="lead" th:text="${office.location.name}">Location</p></div>
+        <div class="actions"><a class="btn" th:href="@{/office/found/new}" th:text="#{office.addFound}">Add Found Item</a><a class="btn btn-secondary" th:href="@{/office/reports}" th:text="#{office.lostQueue}">Lost Queue</a></div>
+    </section>
+    <section class="stats">
+        <article class="card stat-card"><span th:text="#{office.lostReports}">Lost reports</span><strong th:text="${reportCount}">0</strong></article>
+        <article class="card stat-card"><span th:text="#{office.inventory}">Inventory</span><strong th:text="${inventoryCount}">0</strong></article>
+        <article class="card stat-card"><span th:text="#{office.matches}">Matches</span><strong th:text="${matchCount}">0</strong></article>
+        <article class="card stat-card"><span th:text="#{office.returned}">Returned</span><strong th:text="${returnedCount}">0</strong></article>
+    </section>
+    <section class="dashboard-grid section">
+        <div class="panel">
+            <div class="section-header"><div><p class="eyebrow" th:text="#{office.lostQueue}">Lost queue</p><h2 th:text="#{office.recentReports}">Recent reports</h2></div></div>
+            <div class="table-wrap"><table><thead><tr><th th:text="#{item.name}">Item</th><th th:text="#{item.contact}">Contact</th><th th:text="#{item.status}">Status</th><th></th></tr></thead><tbody><tr th:each="report : ${reports}"><td th:text="${report.itemName}">Item</td><td th:text="${report.contactInfo}">Contact</td><td><span th:class="'badge ' + ${report.status}" th:text="#{${'reportStatus.' + report.status.name()}}">Status</span></td><td><a class="btn btn-secondary btn-sm" th:href="@{'/office/reports/' + ${report.id}}" th:text="#{item.viewDetails}">Open</a></td></tr></tbody></table></div>
+        </div>
+        <aside class="stack">
+            <div class="card"><h3 th:text="#{office.inventory}">Inventory</h3><p class="help-text" th:text="#{office.inventoryText}">Only office users can add and manage found items.</p><a class="btn btn-secondary btn-sm" th:href="@{/office/inventory}" th:text="#{office.openInventory}">Open inventory</a></div>
+            <div class="card"><h3 th:text="#{office.matches}">Matches</h3><p class="help-text" th:text="#{office.matchesText}">Review and close office-managed matches.</p><a class="btn btn-secondary btn-sm" th:href="@{/office/matches}" th:text="#{office.openMatches}">Open matches</a></div>
+        </aside>
+    </section>
+</main>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

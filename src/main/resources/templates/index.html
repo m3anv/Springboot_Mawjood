@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.language}" th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/head :: head(#{home.title})}"></head>
+<body>
+<header th:replace="~{layout/nav :: nav}"></header>
+
+<main>
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-panel">
+                <p class="eyebrow" th:text="#{home.eyebrow}">Office-managed recovery</p>
+                <h1 th:text="#{home.title}">Mawjood</h1>
+                <p class="lead" th:text="#{home.lead}">Report a lost item to the correct location office, then track updates while trained staff manage inventory, matches, and returns.</p>
+                <div class="actions">
+                    <a class="btn btn-primary" th:href="@{/reports/new}" th:text="#{home.reportLost}">Report Lost Item</a>
+                    <a class="btn btn-secondary" th:href="@{/login}" th:text="#{home.officeLogin}">Office Login</a>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="hero-card">
+                    <div class="step"><span class="step-number">1</span><div><strong th:text="#{home.step1.title}">Submit</strong><p class="help-text" th:text="#{home.step1.text}">Choose the location where the item was lost.</p></div></div>
+                    <div class="step"><span class="step-number">2</span><div><strong th:text="#{home.step2.title}">Office Review</strong><p class="help-text" th:text="#{home.step2.text}">The location office reviews reports against found inventory.</p></div></div>
+                    <div class="step"><span class="step-number">3</span><div><strong th:text="#{home.step3.title}">Return</strong><p class="help-text" th:text="#{home.step3.text}">Users receive status updates from the office only.</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container section">
+        <div class="section-header">
+            <div class="section-title">
+                <p class="eyebrow" th:text="#{home.locations}">Locations</p>
+                <h2 th:text="#{home.locationTitle}">Lost & Found offices on Mawjood</h2>
+                <p class="lead" th:text="#{home.locationText}">Each report is routed to one office. Public users never see private inventory or contact other users.</p>
+            </div>
+        </div>
+        <div class="grid">
+            <article class="card" th:each="location : ${locations}">
+                <span class="badge" th:text="${location.type}">Location</span>
+                <h3 th:text="${location.name}">Red Sea Mall</h3>
+                <p class="help-text" th:text="${location.address}">Address</p>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>
